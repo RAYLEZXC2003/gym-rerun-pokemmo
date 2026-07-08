@@ -100,54 +100,47 @@
       overflow-y: auto;
     }
 
-    /* ===== SMOOTH VIEW TRANSITIONS ===== */
     .view-section {
-      display: block;
-      opacity: 0;
-      transform: translateY(12px) scale(0.98);
-      transition: opacity 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                  transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      pointer-events: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding: 0 16px 90px;
-      visibility: hidden;
-      will-change: transform, opacity;
+      display: none;
+      animation: fade 0.2s ease;
     }
-    .view-section.active {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-      position: relative;
-      visibility: visible;
-      padding: 0 0 90px;
+    .view-section.active { display: block; }
+
+    @keyframes fade {
+      0% { opacity: 0.6; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== SMOOTH REGION GROUP TRANSITIONS ===== */
-    .region-group {
-      display: block;
-      opacity: 0;
-      transform: translateX(20px) scale(0.96);
-      transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      pointer-events: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      visibility: hidden;
-      will-change: transform, opacity;
+    .region-selector {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
-    .region-group.active {
-      opacity: 1;
-      transform: translateX(0) scale(1);
-      pointer-events: auto;
-      position: relative;
-      visibility: visible;
-    }
+    .region-selector::-webkit-scrollbar { display: none; }
 
-    /* ===== GYM CARD STAGGER ANIMATION ===== */
+    .region-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-gray);
+      white-space: nowrap;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      letter-spacing: 0.2px;
+    }
+    .region-pill.active[data-region="unova"] { border-color: #a855f7; color: #c084fc; background: #a855f720; }
+    .region-pill.active[data-region="sinnoh"] { border-color: #ec4899; color: #f472b6; background: #ec489920; }
+    .region-pill.active[data-region="kanto"]  { border-color: #ef4444; color: #f87171; background: #ef444420; }
+    .region-pill.active[data-region="johto"]  { border-color: #10b981; color: #34d399; background: #10b98120; }
+    .region-pill.active[data-region="hoenn"]  { border-color: #f59e0b; color: #fbbf24; background: #f59e0b20; }
+
     .gym-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -155,13 +148,7 @@
       padding: 16px;
       margin-bottom: 14px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      transition: border 0.15s, transform 0.2s ease, opacity 0.3s ease;
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    .gym-card.visible {
-      opacity: 1;
-      transform: translateY(0);
+      transition: border 0.15s;
     }
     .gym-card:active { border-color: #334155; }
 
@@ -324,13 +311,12 @@
       font-weight: 700;
       text-align: center;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.15s;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
       letter-spacing: 0.3px;
-      position: relative;
     }
     .tab-btn.active {
       color: var(--text-light);
@@ -340,16 +326,17 @@
       background: var(--accent-orange);
       width: 6px;
       height: 6px;
-      transform: scale(1);
     }
-    .tab-btn .icon-dot {
+    .icon-dot {
       width: 4px;
       height: 4px;
       border-radius: 50%;
       background: transparent;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      transform: scale(0);
+      transition: 0.15s;
     }
+
+    .region-group { display: none; }
+    .region-group.active { display: block; }
 
     .city-tag {
       font-size: 0.7rem;
@@ -389,13 +376,6 @@
       border-radius: var(--radius);
       padding: 20px;
       margin-bottom: 16px;
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-    .strat-article.visible {
-      opacity: 1;
-      transform: translateY(0);
     }
     .strat-article h3 {
       color: #facc15;
@@ -434,39 +414,6 @@
       font-size: 1.2rem;
       margin-right: 4px;
     }
-
-    /* region pill smooth transition */
-    .region-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 10px 20px;
-      border-radius: 40px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-gray);
-      white-space: nowrap;
-      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      flex-shrink: 0;
-      letter-spacing: 0.2px;
-      cursor: pointer;
-    }
-    .region-pill.active {
-      transform: scale(1.04);
-    }
-    .region-pill.active[data-region="unova"] { border-color: #a855f7; color: #c084fc; background: #a855f720; }
-    .region-pill.active[data-region="sinnoh"] { border-color: #ec4899; color: #f472b6; background: #ec489920; }
-    .region-pill.active[data-region="kanto"]  { border-color: #ef4444; color: #f87171; background: #ef444420; }
-    .region-pill.active[data-region="johto"]  { border-color: #10b981; color: #34d399; background: #10b98120; }
-    .region-pill.active[data-region="hoenn"]  { border-color: #f59e0b; color: #fbbf24; background: #f59e0b20; }
-    .region-pill:active {
-      transform: scale(0.94);
-    }
-
-    /* Wrapper to contain absolute positioned groups */
-    .region-wrapper {
-      position: relative;
-      min-height: 200px;
-    }
   </style>
 </head>
 <body>
@@ -491,62 +438,60 @@
       <div class="region-pill" data-region="hoenn" onclick="switchRegion('hoenn')">Hoenn (8)</div>
     </div>
 
-    <div class="region-wrapper">
-      <!-- ===== UNOVA ===== -->
-      <div id="unovaGroup" class="region-group active">
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Cilan</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> <span class="move-tag">Swift</span> — Double Eruption sweeps instantly.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Chili</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#f87171;">Fire</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Rock Slide</span> <span class="move-tag">Surf</span> — Water Spout + Rock Slide wipe.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Cress</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> <span class="move-tag">Rock Slide</span> — Water Spout neutral, Shedinja backup.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Burgh</div><span class="gym-city">Castelia City</span><div class="gym-type" style="color:#a3e635;">Bug</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Elesa</div><span class="gym-city">Nimbasa City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, ignore Volt Switch.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Clay</div><span class="gym-city">Driftveil City</span><div class="gym-type" style="color:#fbbf24;">Ground</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> <span class="move-tag">Hydro Pump</span> — Water Spout washes Ground.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Skyla</div><span class="gym-city">Mistralton City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Brycen</div><span class="gym-city">Icirrus City</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption vaporizes.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Iris / Drayden</div><span class="gym-city">Opelucid City</span><div class="gym-type" style="color:#c084fc;">Dragon</div></div><div class="gym-leads">👥 Torkoal + Typhlosion (Scarf)</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Explosion</span> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Torkoal Explosion → Sun, Specs Eruption tears Dragons.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Lenora</div><span class="gym-city">Nacrene City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, watch for Retaliate.</div></div>
-      </div>
+    <!-- ===== UNOVA ===== -->
+    <div id="unovaGroup" class="region-group active">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Cilan</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> <span class="move-tag">Swift</span> — Double Eruption sweeps instantly.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Chili</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#f87171;">Fire</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Rock Slide</span> <span class="move-tag">Surf</span> — Water Spout + Rock Slide wipe.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Cress</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> <span class="move-tag">Rock Slide</span> — Water Spout neutral, Shedinja backup.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Burgh</div><span class="gym-city">Castelia City</span><div class="gym-type" style="color:#a3e635;">Bug</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Elesa</div><span class="gym-city">Nimbasa City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, ignore Volt Switch.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Clay</div><span class="gym-city">Driftveil City</span><div class="gym-type" style="color:#fbbf24;">Ground</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> <span class="move-tag">Hydro Pump</span> — Water Spout washes Ground.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Skyla</div><span class="gym-city">Mistralton City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Brycen</div><span class="gym-city">Icirrus City</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption vaporizes.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Iris / Drayden</div><span class="gym-city">Opelucid City</span><div class="gym-type" style="color:#c084fc;">Dragon</div></div><div class="gym-leads">👥 Torkoal + Typhlosion (Scarf)</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Explosion</span> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Torkoal Explosion → Sun, Specs Eruption tears Dragons.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Lenora</div><span class="gym-city">Nacrene City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, watch for Retaliate.</div></div>
+    </div>
 
-      <!-- ===== SINNOH ===== -->
-      <div id="sinnohGroup" class="region-group">
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Roark</div><span class="gym-city">Oreburgh City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout finishes.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Gardenia</div><span class="gym-city">Eterna City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Fantina</div><span class="gym-city">Hearthome City</span><div class="gym-type" style="color:#c084fc;">Ghost</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption melts frail Ghosts.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Maylene</div><span class="gym-city">Veilstone City</span><div class="gym-type" style="color:#f87171;">Fighting</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Lucario takes 4x, Eruption clears.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Crasher Wake</div><span class="gym-city">Pastoria City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Shadow Sneak</span> <span class="move-tag">X-Scissor</span> <span class="move-tag">Water Spout</span> — Shedinja bricks AI, Blastoise cleans.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Byron</div><span class="gym-city">Canalave City</span><div class="gym-type" style="color:#94a3b8;">Steel</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, Archeops for Sturdy.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Candice</div><span class="gym-city">Snowpoint City</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> <span class="move-tag">Rock Slide</span> — Mainline targets snap. <div class="warning-box">⚠️ <strong>Heatran immunity:</strong> Water Spout immediately washes Heatran.</div></div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Volkner</div><span class="gym-city">Sunyshore City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption wraps region.</div></div>
-      </div>
+    <!-- ===== SINNOH ===== -->
+    <div id="sinnohGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Roark</div><span class="gym-city">Oreburgh City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout finishes.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Gardenia</div><span class="gym-city">Eterna City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Fantina</div><span class="gym-city">Hearthome City</span><div class="gym-type" style="color:#c084fc;">Ghost</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption melts frail Ghosts.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Maylene</div><span class="gym-city">Veilstone City</span><div class="gym-type" style="color:#f87171;">Fighting</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Lucario takes 4x, Eruption clears.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Crasher Wake</div><span class="gym-city">Pastoria City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Shadow Sneak</span> <span class="move-tag">X-Scissor</span> <span class="move-tag">Water Spout</span> — Shedinja bricks AI, Blastoise cleans.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Byron</div><span class="gym-city">Canalave City</span><div class="gym-type" style="color:#94a3b8;">Steel</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, Archeops for Sturdy.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Candice</div><span class="gym-city">Snowpoint City</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> <span class="move-tag">Rock Slide</span> — Mainline targets snap. <div class="warning-box">⚠️ <strong>Heatran immunity:</strong> Water Spout immediately washes Heatran.</div></div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Volkner</div><span class="gym-city">Sunyshore City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption wraps region.</div></div>
+    </div>
 
-      <!-- ===== KANTO ===== -->
-      <div id="kantoGroup" class="region-group">
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Lt. Surge</div><span class="gym-city">Vermilion City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Erika</div><span class="gym-city">Celadon City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Koga</div><span class="gym-city">Fuchsia City</span><div class="gym-type" style="color:#f472b6;">Poison</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, avoid evasion.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Brock</div><span class="gym-city">Pewter City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout clean wipe.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Misty</div><span class="gym-city">Cerulean City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Typhlosion (Scarf)</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Shadow Sneak</span> <span class="move-tag">Will-O-Wisp</span> <span class="move-tag">Eruption</span> — Shedinja absorbs water responses.</div></div>
-      </div>
+    <!-- ===== KANTO ===== -->
+    <div id="kantoGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Lt. Surge</div><span class="gym-city">Vermilion City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Erika</div><span class="gym-city">Celadon City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Koga</div><span class="gym-city">Fuchsia City</span><div class="gym-type" style="color:#f472b6;">Poison</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, avoid evasion.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Brock</div><span class="gym-city">Pewter City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout clean wipe.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Misty</div><span class="gym-city">Cerulean City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Typhlosion (Scarf)</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Shadow Sneak</span> <span class="move-tag">Will-O-Wisp</span> <span class="move-tag">Eruption</span> — Shedinja absorbs water responses.</div></div>
+    </div>
 
-      <!-- ===== JOHTO ===== -->
-      <div id="johtoGroup" class="region-group">
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Pryce</div><span class="gym-city">Mahogany Town</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Falkner</div><span class="gym-city">Violet City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Bugsy</div><span class="gym-city">Azalea Town</span><div class="gym-type" style="color:#a3e635;">Bug</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Whitney</div><span class="gym-city">Goldenrod City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption crushes.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Clair</div><span class="gym-city">Blackthorn City</span><div class="gym-type" style="color:#c084fc;">Dragon</div></div><div class="gym-leads">👥 Torkoal + Typhlosion (Scarf)</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Explosion</span> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Torkoal Explosion → Sun, Specs Typhlosion breaks Kingdra.</div></div>
-      </div>
+    <!-- ===== JOHTO ===== -->
+    <div id="johtoGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Pryce</div><span class="gym-city">Mahogany Town</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Falkner</div><span class="gym-city">Violet City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Bugsy</div><span class="gym-city">Azalea Town</span><div class="gym-type" style="color:#a3e635;">Bug</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Whitney</div><span class="gym-city">Goldenrod City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption crushes.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Clair</div><span class="gym-city">Blackthorn City</span><div class="gym-type" style="color:#c084fc;">Dragon</div></div><div class="gym-leads">👥 Torkoal + Typhlosion (Scarf)</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Explosion</span> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Torkoal Explosion → Sun, Specs Typhlosion breaks Kingdra.</div></div>
+    </div>
 
-      <!-- ===== HOENN ===== -->
-      <div id="hoennGroup" class="region-group">
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Roxanne</div><span class="gym-city">Rustboro City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout clears Rock types.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Brawly</div><span class="gym-city">Dewford Town</span><div class="gym-type" style="color:#f87171;">Fighting</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, neutral to Fighting.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Wattson</div><span class="gym-city">Mauville City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, watch for Sturdy.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Flannery</div><span class="gym-city">Lavaridge Town</span><div class="gym-type" style="color:#f87171;">Fire</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout washes Fire types.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Norman</div><span class="gym-city">Petalburg City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, Facade can hurt.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Winona</div><span class="gym-city">Fortree City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> <span class="move-tag">Rock Slide</span> — Double Eruption, Rock Slide backup.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Tate & Liza</div><span class="gym-city">Mossdeep City</span><div class="gym-type" style="color:#c084fc;">Psychic</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, they hate spread moves.</div></div>
-        <div class="gym-card"><div class="gym-header"><div class="gym-name">Wallace</div><span class="gym-city">Sootopolis City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Shadow Sneak</span> <span class="move-tag">X-Scissor</span> <span class="move-tag">Water Spout</span> — Shedinja locks AI, Blastoise cleans.</div></div>
-      </div>
+    <!-- ===== HOENN ===== -->
+    <div id="hoennGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Roxanne</div><span class="gym-city">Rustboro City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout clears Rock types.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Brawly</div><span class="gym-city">Dewford Town</span><div class="gym-type" style="color:#f87171;">Fighting</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, neutral to Fighting.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Wattson</div><span class="gym-city">Mauville City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, watch for Sturdy.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Flannery</div><span class="gym-city">Lavaridge Town</span><div class="gym-type" style="color:#f87171;">Fire</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Water Spout</span> <span class="move-tag">Surf</span> — Water Spout washes Fire types.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Norman</div><span class="gym-city">Petalburg City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, Facade can hurt.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Winona</div><span class="gym-city">Fortree City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> <span class="move-tag">Rock Slide</span> — Double Eruption, Rock Slide backup.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Tate & Liza</div><span class="gym-city">Mossdeep City</span><div class="gym-type" style="color:#c084fc;">Psychic</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Eruption</span> <span class="move-tag">Flamethrower</span> — Double Eruption, they hate spread moves.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Wallace</div><span class="gym-city">Sootopolis City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Blastoise</div><div class="gym-strat"><strong>Moves:</strong> <span class="move-tag">Shadow Sneak</span> <span class="move-tag">X-Scissor</span> <span class="move-tag">Water Spout</span> — Shedinja locks AI, Blastoise cleans.</div></div>
     </div>
   </section>
 
@@ -693,72 +638,21 @@ Adamant Nature
 </nav>
 
 <script>
-  // ----- TAB SWITCH with smooth transitions -----
+  // ----- TAB SWITCH -----
   function switchTab(viewName, element) {
-    // Update button states
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(viewName + 'View').classList.add('active');
     element.classList.add('active');
-
-    // Animate sections
-    const sections = document.querySelectorAll('.view-section');
-    sections.forEach(s => s.classList.remove('active'));
-
-    // Small delay to let the old section fade out
-    setTimeout(() => {
-      const target = document.getElementById(viewName + 'View');
-      target.classList.add('active');
-
-      // Trigger stagger animation for gym cards in leads view
-      if (viewName === 'leads') {
-        animateGymCards();
-      }
-      // Trigger stagger animation for strategy articles
-      if (viewName === 'strategy') {
-        animateStrategyArticles();
-      }
-    }, 50);
   }
 
-  // ----- REGION SWITCH with smooth transitions -----
+  // ----- REGION SWITCH -----
   function switchRegion(region) {
-    // Update pills
     document.querySelectorAll('.region-pill').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.region-group').forEach(g => g.classList.remove('active'));
     document.querySelector(`.region-pill[data-region="${region}"]`).classList.add('active');
-
-    // Animate groups
-    const groups = document.querySelectorAll('.region-group');
-    groups.forEach(g => g.classList.remove('active'));
-
-    setTimeout(() => {
-      const target = document.getElementById(region + 'Group');
-      target.classList.add('active');
-      // Animate gym cards in the new region
-      animateGymCards();
-    }, 50);
-  }
-
-  // ----- STAGGER ANIMATION for gym cards -----
-  function animateGymCards() {
-    const activeGroup = document.querySelector('.region-group.active');
-    if (!activeGroup) return;
-    const cards = activeGroup.querySelectorAll('.gym-card');
-    cards.forEach((card, index) => {
-      card.classList.remove('visible');
-      setTimeout(() => {
-        card.classList.add('visible');
-      }, 60 + index * 40);
-    });
-  }
-
-  // ----- STAGGER ANIMATION for strategy articles -----
-  function animateStrategyArticles() {
-    const articles = document.querySelectorAll('.strat-article');
-    articles.forEach((art, index) => {
-      art.classList.remove('visible');
-      setTimeout(() => {
-        art.classList.add('visible');
-      }, 80 + index * 60);
-    });
+    document.getElementById(region + 'Group').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ----- TIMER (1 HOUR) -----
@@ -811,14 +705,6 @@ Adamant Nature
       alert('📋 Copied to clipboard!');
     });
   }
-
-  // ----- INITIAL ANIMATION on load -----
-  document.addEventListener('DOMContentLoaded', function() {
-    // Stagger initial gym cards
-    setTimeout(animateGymCards, 100);
-    // Stagger strategy articles (hidden initially, but will animate when tab is opened)
-    setTimeout(animateStrategyArticles, 150);
-  });
 </script>
 
 </body>
