@@ -368,6 +368,52 @@
     .move-list {
       margin-top: 4px;
     }
+
+    /* Strategy tab specific */
+    .strat-article {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .strat-article h3 {
+      color: #facc15;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .strat-article p {
+      color: var(--text-gray);
+      line-height: 1.6;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+    .strat-article ul {
+      padding-left: 20px;
+      color: var(--text-gray);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .strat-article ul li {
+      margin-bottom: 6px;
+    }
+    .strat-article .highlight {
+      background: #1e293b;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-orange);
+      margin-top: 12px;
+    }
+    .strat-article .highlight strong {
+      color: #f1f5f9;
+    }
+    .pokemon-icon {
+      font-size: 1.2rem;
+      margin-right: 4px;
+    }
   </style>
 </head>
 <body>
@@ -519,6 +565,59 @@ Adamant Nature
     </div>
   </section>
 
+  <!-- ===== STRATEGY VIEW ===== -->
+  <section id="strategyView" class="view-section">
+    <div class="strat-article">
+      <h3>🧠 Core Strategy: Why This Team?</h3>
+      <p>This team is built for <strong>speed and raw power</strong> to clear all gym reruns within a single Riches Charm (60 minutes). The goal is to 1HKO or 2HKO every gym leader with minimal switching.</p>
+      <ul>
+        <li><strong>Double Typhlosion:</strong> Eruption hits both opponents in double battles. With maximum Special Attack and Speed, it outruns and OHKOs most frail or neutral targets.</li>
+        <li><strong>Choice Specs vs Scarf:</strong> Specs Typhlosion provides maximum damage; Scarf Typhlosion ensures speed control against faster threats like Electrode or Accelgor.</li>
+        <li><strong>Blastoise + Archeops:</strong> Covers Fire, Rock, and Ground types where Eruption is resisted. Water Spout is a 150 BP move at full HP, and Rock Slide provides spread flinch chance.</li>
+        <li><strong>Torkoal + Drought:</strong> Sets up sun to boost Eruption and enables a 1-turn Explosion to bring in Typhlosion safely while keeping sun active.</li>
+        <li><strong>Shedinja:</strong> Exploits Wonder Guard to wall specific gyms (Water, Normal, Fighting) and forces the AI into useless moves, giving Blastoise free turns.</li>
+      </ul>
+      <div class="highlight">
+        <strong>⚡ Key principle:</strong> Every Pokémon is EV-trained for maximum offense. Speed is prioritized to ensure you always move first. The team uses <strong>Choice items</strong> to boost damage, and <strong>spread moves</strong> like Eruption and Rock Slide to clear double battles efficiently.
+      </div>
+    </div>
+
+    <div class="strat-article">
+      <h3>📦 Item Breakdown</h3>
+      <ul>
+        <li><strong>Choice Specs (Typhlosion):</strong> +50% Special Attack. Eruption becomes a nuke that can OHKO even resistant foes like Dragonite after sun.</li>
+        <li><strong>Choice Scarf (Typhlosion & Blastoise):</strong> +50% Speed. Allows you to outrun base 130+ speed mons like Jolteon or Crobat. Blastoise with Scarf outspeeds most gym leads.</li>
+        <li><strong>Wide Lens (Archeops):</strong> Increases accuracy of Rock Slide to 99%, ensuring you don't miss crucial flinches or KOs.</li>
+        <li><strong>Heat Rock (Torkoal):</strong> Extends sun from 5 to 8 turns, giving Typhlosion multiple Eruption boosts without needing to re-set.</li>
+        <li><strong>Focus Sash (Shedinja):</strong> Prevents OHKO from Mold Breaker or weather chip, guaranteeing at least one turn to pivot or status.</li>
+      </ul>
+    </div>
+
+    <div class="strat-article">
+      <h3>⚔️ Move Selection Logic</h3>
+      <ul>
+        <li><strong>Eruption:</strong> The star move. Hits both opponents and scales with HP. With Specs and sun, it's the most efficient spread move in the game.</li>
+        <li><strong>Water Spout:</strong> Blastoise's equivalent to Eruption. Hits Water-weak types (Rock, Ground, Fire) for massive damage.</li>
+        <li><strong>Rock Slide:</strong> Archeops's spread move. Hits Flying, Bug, and Ice types. Wide Lens ensures reliability.</li>
+        <li><strong>Explosion:</strong> Torkoal's suicide move to bring in a sweeper while setting sun. Also deals heavy damage to Sturdy users.</li>
+        <li><strong>Shadow Sneak / X-Scissor:</strong> Shedinja's priority and coverage. Shadow Sneak picks off low-HP targets, X-Scissor hits Dark and Psychic types.</li>
+        <li><strong>Utility moves (Swift, Extrasensory, Protect):</strong> Filler moves for coverage or to stall turns when needed (e.g., Protect on Shedinja to scout).</li>
+      </ul>
+    </div>
+
+    <div class="strat-article">
+      <h3>🎯 Pokémon Roles</h3>
+      <ul>
+        <li><strong>Typhlosion (Specs):</strong> Main sweeper. Used against Grass, Bug, Steel, Ice, and neutral matchups. Hits like a truck.</li>
+        <li><strong>Typhlosion (Scarf):</strong> Speed control sweeper. Used against faster teams (Elesa, Volkner) or when you need to outrun a specific threat.</li>
+        <li><strong>Blastoise:</strong> Water-type specialist. Used against Fire, Rock, and Ground gyms. Also serves as a backup special sweeper.</li>
+        <li><strong>Archeops:</strong> Physical spread attacker. Used against Flying, Bug, and Ice types. Rock Slide flinch can cheese wins.</li>
+        <li><strong>Torkoal:</strong> Sun setter and suicide lead. Used against Dragon gyms (Iris/Clair) to enable Eruption sweeps.</li>
+        <li><strong>Shedinja:</strong> Defensive pivot. Used against Water, Normal, and Fighting gyms to wall the AI and force safe switches.</li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ===== CONFIGS / RULES VIEW ===== -->
   <section id="rulesView" class="view-section">
     <div class="gym-card">
@@ -534,6 +633,7 @@ Adamant Nature
 <nav class="nav-tabs">
   <button class="tab-btn active" onclick="switchTab('leads', this)"><span>⚔️ Leads</span><div class="icon-dot"></div></button>
   <button class="tab-btn" onclick="switchTab('paste', this)"><span>📋 Team</span><div class="icon-dot"></div></button>
+  <button class="tab-btn" onclick="switchTab('strategy', this)"><span>🧠 Strategy</span><div class="icon-dot"></div></button>
   <button class="tab-btn" onclick="switchTab('rules', this)"><span>⚡ Configs</span><div class="icon-dot"></div></button>
 </nav>
 
