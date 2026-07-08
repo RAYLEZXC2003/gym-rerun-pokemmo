@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PokeMMO Rerun Companion</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-main: #080c14;
+      --bg-card: #111a24;
+      --bg-dark: #05080e;
+      --accent-orange: #f97316;
+      --accent-blue: #2563eb;
+      --text-light: #f1f5f9;
+      --text-gray: #94a3b8;
+      --border: #1e293b;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      --radius: 16px;
+
+      --unova: #a855f7;
+      --sinnoh: #ec4899;
+      --kanto: #ef4444;
+      --johto: #10b981;
+      --hoenn: #f59e0b;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-light);
+      min-height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    }
+
+    header {
+      background: var(--bg-card);
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    h1 span { color: var(--accent-orange); }
+
+    .timer-widget {
+      background: var(--bg-dark);
+      padding: 6px 14px 6px 12px;
+      border-radius: 40px;
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      font-family: 'SF Mono', 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-orange);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: border 0.2s, background 0.2s;
+      cursor: pointer;
+      user-select: none;
+      letter-spacing: 0.5px;
+    }
+    .timer-widget:active {
+      background: #1e293b;
+      border-color: var(--accent-orange);
+    }
+
+    main {
+      flex: 1;
+      padding: 16px 16px 90px;
+      overflow-y: auto;
+    }
+
+    .view-section {
+      display: none;
+      animation: fade 0.2s ease;
+    }
+    .view-section.active { display: block; }
+
+    @keyframes fade {
+      0% { opacity: 0.6; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .region-selector {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .region-selector::-webkit-scrollbar { display: none; }
+
+    .region-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-gray);
+      white-space: nowrap;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      letter-spacing: 0.2px;
+    }
+    .region-pill.active[data-region="unova"] { border-color: #a855f7; color: #c084fc; background: #a855f720; }
+    .region-pill.active[data-region="sinnoh"] { border-color: #ec4899; color: #f472b6; background: #ec489920; }
+    .region-pill.active[data-region="kanto"]  { border-color: #ef4444; color: #f87171; background: #ef444420; }
+    .region-pill.active[data-region="johto"]  { border-color: #10b981; color: #34d399; background: #10b98120; }
+    .region-pill.active[data-region="hoenn"]  { border-color: #f59e0b; color: #fbbf24; background: #f59e0b20; }
+
+    .gym-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: border 0.15s;
+    }
+    .gym-card:active { border-color: #334155; }
+
+    .gym-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .gym-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.2px;
+    }
+
+    .gym-city {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-gray);
+      background: var(--bg-dark);
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      letter-spacing: 0.2px;
+    }
+
+    .gym-type {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      letter-spacing: 0.3px;
+    }
+
+    .gym-leads {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: var(--bg-dark);
+      padding: 8px 14px;
+      border-radius: 40px;
+      margin: 8px 0 10px;
+      color: #e2e8f0;
+      border-left: 3px solid var(--accent-orange);
+    }
+
+    .gym-strat {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      line-height: 1.5;
+    }
+
+    .warning-box {
+      background: rgba(249, 115, 22, 0.08);
+      border-left: 3px solid var(--accent-orange);
+      color: #fb923c;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+    .warning-box strong { color: #fcd34d; }
+
+    .action-btn {
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      width: 100%;
+      padding: 16px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: 0.15s;
+      letter-spacing: 0.3px;
+    }
+    .action-btn:active {
+      transform: scale(0.97);
+      background: #1d4ed8;
+    }
+
+    .paste-box pre {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-family: 'SF Mono', 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      max-height: 460px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .rule-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      align-items: flex-start;
+    }
+    .rule-item:last-child { border-bottom: none; }
+    .rule-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+      min-width: 32px;
+    }
+    .rule-details strong {
+      color: #f1f5f9;
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      z-index: 60;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      padding: 14px 0 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.3px;
+    }
+    .tab-btn.active {
+      color: var(--text-light);
+      background: var(--bg-dark);
+    }
+    .tab-btn.active .icon-dot {
+      background: var(--accent-orange);
+      width: 6px;
+      height: 6px;
+    }
+    .icon-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: transparent;
+      transition: 0.15s;
+    }
+
+    .region-group { display: none; }
+    .region-group.active { display: block; }
+
+    .city-tag {
+      font-size: 0.7rem;
+      color: var(--text-gray);
+      background: var(--bg-dark);
+      padding: 2px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .gym-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>Rerun <span>Companion</span></h1>
+    <div class="timer-widget" id="timerDisplay" onclick="toggleTimer()" role="button" aria-label="Start or stop charm timer">
+      <span>⏱️</span> <span id="timerText">60:00</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- LEAD LIST VIEW -->
+  <section id="leadsView" class="view-section active">
+    <div class="region-selector">
+      <div class="region-pill active" data-region="unova" onclick="switchRegion('unova')">Unova (10)</div>
+      <div class="region-pill" data-region="sinnoh" onclick="switchRegion('sinnoh')">Sinnoh (8)</div>
+      <div class="region-pill" data-region="kanto" onclick="switchRegion('kanto')">Kanto (5)</div>
+      <div class="region-pill" data-region="johto" onclick="switchRegion('johto')">Johto (5)</div>
+      <div class="region-pill" data-region="hoenn" onclick="switchRegion('hoenn')">Hoenn (8)</div>
+    </div>
+
+    <!-- ===== UNOVA ===== -->
+    <div id="unovaGroup" class="region-group active">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Cilan</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption sweeps instantly.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Chili</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#f87171;">Fire</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Water Spout + Rock Slide wipe.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Cress</div><span class="gym-city">Striaton City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Water Spout neutral, Shedinja backup.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Burgh</div><span class="gym-city">Castelia City</span><div class="gym-type" style="color:#a3e635;">Bug</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Elesa</div><span class="gym-city">Nimbasa City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, ignore Volt Switch.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Clay</div><span class="gym-city">Driftveil City</span><div class="gym-type" style="color:#fbbf24;">Ground</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Water Spout washes Ground.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Skyla</div><span class="gym-city">Mistralton City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Brycen</div><span class="gym-city">Icirrus City</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption vaporizes.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Iris / Drayden</div><span class="gym-city">Opelucid City</span><div class="gym-type" style="color:#c084fc;">Dragon</div></div><div class="gym-leads">👥 Torkoal + Typhlosion (Scarf)</div><div class="gym-strat">Torkoal Explosion → Sun, Specs Eruption tears Dragons.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Lenora</div><span class="gym-city">Nacrene City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, watch for Retaliate.</div></div>
+    </div>
+
+    <!-- ===== SINNOH ===== -->
+    <div id="sinnohGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Roark</div><span class="gym-city">Oreburgh City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Water Spout finishes.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Gardenia</div><span class="gym-city">Eterna City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Fantina</div><span class="gym-city">Hearthome City</span><div class="gym-type" style="color:#c084fc;">Ghost</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption melts frail Ghosts.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Maylene</div><span class="gym-city">Veilstone City</span><div class="gym-type" style="color:#f87171;">Fighting</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Lucario takes 4x, Eruption clears.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Crasher Wake</div><span class="gym-city">Pastoria City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Blastoise</div><div class="gym-strat">Shedinja bricks AI, Blastoise cleans.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Byron</div><span class="gym-city">Canalave City</span><div class="gym-type" style="color:#94a3b8;">Steel</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, Archeops for Sturdy.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Candice</div><span class="gym-city">Snowpoint City</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Mainline targets snap. <div class="warning-box">⚠️ <strong>Heatran immunity:</strong> Water Spout immediately washes Heatran.</div></div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Volkner</div><span class="gym-city">Sunyshore City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption wraps region.</div></div>
+    </div>
+
+    <!-- ===== KANTO ===== -->
+    <div id="kantoGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Lt. Surge</div><span class="gym-city">Vermilion City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Erika</div><span class="gym-city">Celadon City</span><div class="gym-type" style="color:#4ade80;">Grass</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Koga</div><span class="gym-city">Fuchsia City</span><div class="gym-type" style="color:#f472b6;">Poison</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, avoid evasion.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Brock</div><span class="gym-city">Pewter City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Water Spout clean wipe.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Misty</div><span class="gym-city">Cerulean City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Typhlosion (Scarf)</div><div class="gym-strat">Shedinja absorbs water responses.</div></div>
+    </div>
+
+    <!-- ===== JOHTO ===== -->
+    <div id="johtoGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Pryce</div><span class="gym-city">Mahogany Town</span><div class="gym-type" style="color:#7dd3fc;">Ice</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Falkner</div><span class="gym-city">Violet City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Bugsy</div><span class="gym-city">Azalea Town</span><div class="gym-type" style="color:#a3e635;">Bug</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Whitney</div><span class="gym-city">Goldenrod City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption crushes.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Clair</div><span class="gym-city">Blackthorn City</span><div class="gym-type" style="color:#c084fc;">Dragon</div></div><div class="gym-leads">👥 Torkoal + Typhlosion (Scarf)</div><div class="gym-strat">Torkoal Explosion → Sun, Specs Typhlosion breaks Kingdra.</div></div>
+    </div>
+
+    <!-- ===== HOENN (NEW) ===== -->
+    <div id="hoennGroup" class="region-group">
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Roxanne</div><span class="gym-city">Rustboro City</span><div class="gym-type" style="color:#fbbf24;">Rock</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Water Spout clears Rock types.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Brawly</div><span class="gym-city">Dewford Town</span><div class="gym-type" style="color:#f87171;">Fighting</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, neutral to Fighting.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Wattson</div><span class="gym-city">Mauville City</span><div class="gym-type" style="color:#facc15;">Electric</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, watch for Sturdy.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Flannery</div><span class="gym-city">Lavaridge Town</span><div class="gym-type" style="color:#f87171;">Fire</div></div><div class="gym-leads">👥 Archeops + Blastoise</div><div class="gym-strat">Water Spout washes Fire types.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Norman</div><span class="gym-city">Petalburg City</span><div class="gym-type" style="color:#94a3b8;">Normal</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, Facade can hurt.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Winona</div><span class="gym-city">Fortree City</span><div class="gym-type" style="color:#38bdf8;">Flying</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, Rock Slide backup.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Tate & Liza</div><span class="gym-city">Mossdeep City</span><div class="gym-type" style="color:#c084fc;">Psychic</div></div><div class="gym-leads">👥 Typhlosion + Typhlosion</div><div class="gym-strat">Double Eruption, they hate spread moves.</div></div>
+      <div class="gym-card"><div class="gym-header"><div class="gym-name">Wallace</div><span class="gym-city">Sootopolis City</span><div class="gym-type" style="color:#60a5fa;">Water</div></div><div class="gym-leads">👥 Shedinja + Blastoise</div><div class="gym-strat">Shedinja locks AI, Blastoise cleans.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== POKEPASTE VIEW ===== -->
+  <section id="pasteView" class="view-section">
+    <button class="action-btn" id="copyBtn" onclick="copyPasteMobile()">📋 Copy Team Text</button>
+    <div class="paste-box">
+      <pre id="pasteContent">Typhlosion (M) @ Choice Specs  
+Ability: Blaze  
+Level: 100  
+EVs: 4 HP / 254 SpA / 252 Spe  
+Modest Nature  
+IVs: 31 SpA / 31 Spe  
+- Eruption  
+- Flamethrower  
+- Swift  
+- Cut  
+
+Typhlosion (M) @ Choice Scarf  
+Ability: Blaze  
+Level: 100  
+EVs: 4 HP / 254 SpA / 252 Spe  
+Modest Nature  
+IVs: 31 SpA / 31 Spe  
+- Eruption  
+- Flamethrower  
+- Swift  
+- Extrasensory  
+
+Blastoise (M) @ Choice Scarf  
+Ability: Torrent  
+Level: 100  
+EVs: 4 HP / 254 SpA / 252 Spe  
+Modest Nature  
+IVs: 31 SpA / 31 Spe  
+- Water Spout  
+- Surf  
+- Blizzard  
+- Hydro Pump  
+
+Archeops (M) @ Wide Lens  
+Ability: Defeatist  
+Level: 100  
+EVs: 4 HP / 252 Atk / 252 Spe  
+Adamant Nature  
+IVs: 31 Atk / 31 Spe  
+- Rock Slide  
+- Tailwind  
+- Fly  
+- U-turn  
+
+Torkoal (M) @ Heat Rock  
+Ability: Drought  
+Level: 100  
+EVs: 252 HP / 252 Atk / 4 SpD  
+Adamant Nature  
+- Explosion  
+- Protect  
+- Stealth Rock  
+- Lava Plume  
+
+Shedinja @ Focus Sash  
+Ability: Wonder Guard  
+Level: 100  
+EVs: 252 Atk / 252 Spe  
+Adamant Nature  
+- Shadow Sneak  
+- X-Scissor  
+- Will-O-Wisp  
+- Protect</pre>
+    </div>
+  </section>
+
+  <!-- ===== CONFIGS / RULES VIEW ===== -->
+  <section id="rulesView" class="view-section">
+    <div class="gym-card">
+      <h3 style="margin-bottom:14px; font-size:1.1rem;">⚡ Charm Window Priorities</h3>
+      <div class="rule-item"><div class="rule-icon">🎬</div><div class="rule-details"><strong>Turn Off Animations</strong>Saves ~5–8 minutes per charm. Essential.</div></div>
+      <div class="rule-item"><div class="rule-icon">🏥</div><div class="rule-details"><strong>Skip Pokémon Centers</strong>If Typhlosions took 0 damage, fly out immediately.</div></div>
+      <div class="rule-item"><div class="rule-icon">👑</div><div class="rule-details"><strong>Endgame Boss Clocks</strong>Under 6 mins left, fly to Morimoto (Castelia) or Cynthia (Undella) for $31k bursts.</div></div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== BOTTOM TAB NAV ===== -->
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('leads', this)"><span>⚔️ Leads</span><div class="icon-dot"></div></button>
+  <button class="tab-btn" onclick="switchTab('paste', this)"><span>📋 Team</span><div class="icon-dot"></div></button>
+  <button class="tab-btn" onclick="switchTab('rules', this)"><span>⚡ Configs</span><div class="icon-dot"></div></button>
+</nav>
+
+<script>
+  // ----- TAB SWITCH -----
+  function switchTab(viewName, element) {
+    document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(viewName + 'View').classList.add('active');
+    element.classList.add('active');
+  }
+
+  // ----- REGION SWITCH -----
+  function switchRegion(region) {
+    document.querySelectorAll('.region-pill').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.region-group').forEach(g => g.classList.remove('active'));
+    document.querySelector(`.region-pill[data-region="${region}"]`).classList.add('active');
+    document.getElementById(region + 'Group').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ----- TIMER (1 HOUR) -----
+  let timerSeconds = 3600;
+  let timerInterval = null;
+  const timerText = document.getElementById('timerText');
+  const timerDisplay = document.getElementById('timerDisplay');
+
+  function toggleTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerDisplay.style.borderColor = 'rgba(249, 115, 22, 0.35)';
+    } else {
+      timerDisplay.style.borderColor = '#f97316';
+      timerInterval = setInterval(() => {
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          alert('⏳ Your Riches Charm has expired!');
+          timerDisplay.style.borderColor = 'rgba(249, 115, 22, 0.35)';
+          return;
+        }
+        timerSeconds--;
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        timerText.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+  }
+
+  // ----- COPY PASTE (CLIPBOARD) -----
+  function copyPasteMobile() {
+    const pasteStr = document.getElementById('pasteContent').innerText;
+    navigator.clipboard.writeText(pasteStr).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.innerHTML = '✅ Team Text Copied!';
+      btn.style.backgroundColor = '#10b981';
+      setTimeout(() => {
+        btn.innerHTML = '📋 Copy Team Text';
+        btn.style.backgroundColor = '#2563eb';
+      }, 2200);
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = pasteStr;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      alert('📋 Copied to clipboard!');
+    });
+  }
+</script>
+
+</body>
+</html>
